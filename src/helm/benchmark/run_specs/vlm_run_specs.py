@@ -368,6 +368,96 @@ def get_bingo_spec(subject: str) -> RunSpec:
     )
 
 
+@run_spec_function("multipanelvqa")
+def get_multipanelvqa_spec(subject: str, question_type: str) -> RunSpec:
+    scenario_spec = ScenarioSpec(
+        class_name="helm.benchmark.scenarios.vision_language.multipanelvqa_scenario.MultipanelVQAScenario",
+        args={"subject": subject, "question_type": question_type},
+    )
+
+    adapter_spec: AdapterSpec
+    if question_type == "open":
+        adapter_spec = get_short_answer_generation_adapter_spec()
+    elif question_type == "multiple-choice":
+        adapter_spec = get_multiple_choice_joint_adapter_spec(
+            input_noun=None, output_noun="Answer", max_train_instances=0
+        )
+    else:
+        raise ValueError(f"Invalid question type: {question_type}")
+
+    metric_specs: List[MetricSpec] = get_exact_match_metric_specs()
+    run_spec_name: str = "multipanelvqa"
+    return RunSpec(
+        name=f"{run_spec_name}:subject={subject},question_type={question_type}",
+        scenario_spec=scenario_spec,
+        adapter_spec=adapter_spec,
+        metric_specs=metric_specs,
+        groups=[run_spec_name],
+    )
+
+
+@run_spec_function("pope")
+def get_pope_spec() -> RunSpec:
+    scenario_spec = ScenarioSpec(
+        class_name="helm.benchmark.scenarios.vision_language.pope_scenario.POPEScenario",
+    )
+    adapter_spec: AdapterSpec = get_multiple_choice_joint_adapter_spec(
+        input_noun=None, output_noun="Answer", max_train_instances=0
+    )
+    metric_specs: List[MetricSpec] = get_exact_match_metric_specs()
+
+    run_spec_name: str = "pope"
+    return RunSpec(
+        name=run_spec_name,
+        scenario_spec=scenario_spec,
+        adapter_spec=adapter_spec,
+        metric_specs=metric_specs,
+        groups=[run_spec_name],
+    )
+
+
+@run_spec_function("seed_bench")
+def get_seed_bench_spec(subject: str) -> RunSpec:
+    scenario_spec = ScenarioSpec(
+        class_name="helm.benchmark.scenarios.vision_language.seed_bench_scenario.SEEDBenchScenario",
+        args={"subject": subject},
+    )
+    adapter_spec: AdapterSpec = get_multiple_choice_joint_adapter_spec(
+        input_noun=None, output_noun="Answer", max_train_instances=0
+    )
+    metric_specs: List[MetricSpec] = get_exact_match_metric_specs()
+
+    run_spec_name: str = "seed_bench"
+    return RunSpec(
+        name=run_spec_name,
+        scenario_spec=scenario_spec,
+        adapter_spec=adapter_spec,
+        metric_specs=metric_specs,
+        groups=[run_spec_name],
+    )
+
+
+@run_spec_function("mme")
+def get_mme_spec(subject: str) -> RunSpec:
+    scenario_spec = ScenarioSpec(
+        class_name="helm.benchmark.scenarios.vision_language.mme_scenario.MMEScenario",
+        args={"subject": subject},
+    )
+    adapter_spec: AdapterSpec = get_multiple_choice_joint_adapter_spec(
+        input_noun=None, output_noun="Answer", max_train_instances=0
+    )
+    metric_specs: List[MetricSpec] = get_exact_match_metric_specs()
+
+    run_spec_name: str = "mme"
+    return RunSpec(
+        name=run_spec_name,
+        scenario_spec=scenario_spec,
+        adapter_spec=adapter_spec,
+        metric_specs=metric_specs,
+        groups=[run_spec_name],
+    )
+
+
 @run_spec_function("heim_human_eval")
 def get_heim_human_eval_spec(question_type: str) -> RunSpec:
     scenario_spec = ScenarioSpec(
@@ -385,6 +475,25 @@ def get_heim_human_eval_spec(question_type: str) -> RunSpec:
     run_spec_name: str = "heim_human_eval"
     return RunSpec(
         name=f"{run_spec_name}:question_type={question_type}",
+        scenario_spec=scenario_spec,
+        adapter_spec=adapter_spec,
+        metric_specs=metric_specs,
+        groups=[run_spec_name],
+    )
+
+
+@run_spec_function("mementos")
+def get_mementos_spec(subject: str) -> RunSpec:
+    scenario_spec = ScenarioSpec(
+        class_name="helm.benchmark.scenarios.vision_language.mementos_scenario.MementosScenario",
+        args={"subject": subject},
+    )
+    adapter_spec: AdapterSpec = get_short_answer_generation_adapter_spec()
+    metric_specs: List[MetricSpec] = get_open_ended_generation_metric_specs()
+
+    run_spec_name: str = "mementos"
+    return RunSpec(
+        name=run_spec_name,
         scenario_spec=scenario_spec,
         adapter_spec=adapter_spec,
         metric_specs=metric_specs,
